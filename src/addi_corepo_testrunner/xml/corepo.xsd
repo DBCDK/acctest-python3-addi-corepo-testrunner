@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This file is part of opensearch.
+  Copyright © 2009, Dansk Bibliotekscenter a/s,
+  Tempovej 7-11, DK-2750 Ballerup, Denmark. CVR: 15149043
+
+  opensearch is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  opensearch is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with opensearch.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- xsd documenting how to utilize the solr wrapper in test-scenarios. -->
+
+<xsd:schema targetNamespace="http://dbc.dk/xml/namespaces/fcrepo"
+            xmlns="http://dbc.dk/xml/namespaces/fcrepo"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+
+  <xsd:element name="fcrepo">
+    <xsd:annotation>
+      <xsd:documentation>
+        Fcrepo setup containing type attribute specifying which type of
+        Fcrepo is to be initialized.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="type" use="required" type="fcrepoTypeType"/>
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="authorized">
+    <xsd:annotation>
+      <xsd:documentation>
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="id" type="idType"/>
+      </xsd:sequence>
+      <xsd:attribute name="path" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" type="authorizedExpectedType"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="streamModified">
+    <xsd:annotation>
+      <xsd:documentation>
+        Checks whether the streams are changed since last snapshot. If
+        the streams have changed, a failure is reported.
+      </xsd:documentation>
+    </xsd:annotation> 
+    <xsd:complexType>
+    <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+      <xsd:element name="stream" type="modifiedType"/>
+    </xsd:sequence>   
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="streamNotModified">
+    <xsd:annotation>
+      <xsd:documentation>
+        Checks whether the streams are changed since last snapshot. If
+        the streams haven't changed, a failure is reported.
+      </xsd:documentation>
+    </xsd:annotation> 
+    <xsd:complexType>
+    <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+      <xsd:element name="stream" type="modifiedType"/>
+    </xsd:sequence>   
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="modifiedType">
+    <xsd:attribute name="pid" use="required" type="xsd:string"/>
+    <xsd:attribute name="name" use="required" type="xsd:string"/>
+  </xsd:complexType>
+
+
+  <xsd:element name="snapshot">
+    <xsd:annotation>
+      <xsd:documentation>
+        Creates a snapshot of all objects residing in the repository.
+        This can later be used to check against, with the
+        'modified-stream' and 'not-modified-stream' tags.
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="ingest">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'ingest' element has a type attribute that must conform to
+        ingestTypeType, a value attribute specifying the item to be ingested
+        and an optional expected attribute.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="type" use="required" type="ingestTypeType"/>
+      <xsd:attribute name="value" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" type="xsd:integer"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="purge">
+    <xsd:annotation>
+      <xsd:documentation>
+        The purge element must contain one or more children of
+        type idType, one for each id to be purged.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="id" type="idType"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="search">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'search' element performs a search upon the objects in the repository,
+        testing the number of returned hits against the value specified in the 
+        optional expected attribute and testing ids of returned records against
+        the (possible empty) list of children of type idType.
+        A term child represented as a sequence of characters (including 
+        the ? and * wildcards) can be specified for a phrase search in any field of an
+        object. Alternatively a number of search condition children can be specified, 
+        each consisting of a metadata element name, that must conform to the 
+        searchConditionElementType, followed directly by an operator, that must 
+        conform to the searchConditionOperatorType, followed directly be a value, 
+        that must conform to the searchConditionValueType.
+        Terms and conditions are mutually exclusive.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice minOccurs="1" maxOccurs="1">
+          <xsd:element name="term" type="searchTermType" minOccurs="1" maxOccurs="1"/>
+          <xsd:element name="condition" type="searchConditionType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:choice>
+        <xsd:element name="id" type="idType" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="expected" type="xsd:integer"/>
+    </xsd:complexType>
+  </xsd:element>
+
+      <xsd:element name="listDatastreams">
+        <xsd:annotation>
+      <xsd:documentation>
+        The 'listDatastreams' element lists the datastreams of a particular object
+        in the repository.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="id" type="idType" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="expected" type="xsd:integer"/>
+      <xsd:attribute name="id" use="required" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+
+
+  <xsd:element name="hasDatastreamContent">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'getDatastreamContent' element retrieves the contents of a datastream
+        given a repository identifier and a datastream id. The content is checked for emptiness.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="id" use="required" type="xsd:string"/>
+      <xsd:attribute name="dsId" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" use="required" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="getDatastreamAttribute">
+    <xsd:annotation>
+      <xsd:documentation>
+          The 'getDatastreamAttribute' element retrieves a particular datastream and checks
+          the specified attribute of that datastream. An repository identifier, datastream id, 
+          attribute name and exists attribute value are required.
+          Use the optional expected to test against the actual value of the attribute.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="id" use="required" type="xsd:string"/>
+      <xsd:attribute name="dsId" use="required" type="xsd:string"/>
+      <xsd:attribute name="dsAttribute" use="required" type="datastreamAttributeType"/>
+      <xsd:attribute name="exists" use="required" type="xsd:boolean"/>
+      <xsd:attribute name="expected" use="optional" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+  
+
+  <xsd:element name="getDatastreamState">
+    <xsd:annotation>
+      <xsd:documentation>
+          The 'getDatastreamState' element retrieves a particular datastream and checks
+          the state of that datastream. An repository identifier and datastream id are
+          required.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="id" use="required" type="xsd:string"/>
+      <xsd:attribute name="dsId" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" use="required" type="repoStateType"/>
+    </xsd:complexType>
+  </xsd:element>
+  
+
+  <xsd:element name="checkUnit">
+    <xsd:annotation>
+      <xsd:documentation>
+          The 'checkUnit' element tests existence of unit relations between
+          the object identified by the value of the 'record' attribute and
+          the unit object identified by the value of the 'unit' attribute.
+          The expected outcome can be toggled with the 'expected' attribute.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="record" use="required" type="xsd:string"/>
+      <xsd:attribute name="unit" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" default="true" use="optional" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="checkWork">
+    <xsd:annotation>
+      <xsd:documentation>
+          The 'checkWork' element tests existance of work relations between 
+          the unit object identified by the value of the 'unit' attribute and
+          the work object identified by the value of the 'work' attribute.
+          The expected outcome can be toggled with the 'expected' attribute.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="unit" use="required" type="xsd:string"/>
+      <xsd:attribute name="work" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" default="true" use="optional" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="checkPrimaryUnit">
+    <xsd:annotation>
+      <xsd:documentation>
+          The 'checkPrimaryUnit' element tests existance of primary unit relations 
+          between the object identified by the value of the 'record' attribute 
+          and the unit object identified by the value of the 'unit' attribute.
+          The expected outcome can be toggled with the 'expected' attribute. 
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="record" use="required" type="xsd:string"/>
+      <xsd:attribute name="unit" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" default="true" use="optional" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="checkPrimaryWork">
+    <xsd:annotation>
+      <xsd:documentation>
+          The 'checkPrimaryWork' element tests existance of primary work relations 
+          between the unit object identified by the value of the 'unit' 
+          attribute and the work object identified by the value of the 'work' 
+          attribute. The expected outcome can be toggled with the 'expected' attribute.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="unit" use="required" type="xsd:string"/>
+      <xsd:attribute name="work" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" default="true" use="optional" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="checkAddi">
+    <xsd:annotation>
+      <xsd:documentation>          
+          The 'checkAddi' element tests existence of a
+          addi-relationwork between 2 objects. The expected outcome
+          can be toggled with the 'expected' attribute.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="subject" use="required" type="xsd:string"/>
+      <xsd:attribute name="predicate" use="required" type="xsd:string"/>
+      <xsd:attribute name="object" use="required" type="xsd:string"/>
+      <xsd:attribute name="expected" default="true" use="optional" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="fcrepoTypeType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'fcrepoTypeType' can be either 'normal', 'nonresponsive', \todo: finish list of fcrepo types...
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="normal"/>
+      <xsd:enumeration value="nonresponsive"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ingestTypeType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'ingestType' can be either 'file' or 'folder'.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="file"/>
+      <xsd:enumeration value="folder"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="authorizedExpectedType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'authorizedExpectedType' can either be permit or deny.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="permit"/>
+      <xsd:enumeration value="deny"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="idType">
+    <xsd:attribute name="value" use="required" type="xsd:string"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="searchTermType">
+    <xsd:attribute name="value" use="required" type="xsd:string"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="searchConditionType">
+    <xsd:sequence>
+      <xsd:element name="element" type="searchConditionElementType"/>
+      <xsd:element name="operator" type="searchConditionOperatorType"/>
+      <xsd:element name="value" type="searchConditionValueType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="searchConditionElementType">
+    <xsd:attribute name="value" use="required" type="searchConditionElementEnumType"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="searchConditionElementEnumType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of valid search condition element names.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="pid"/>
+      <xsd:enumeration value="label"/>
+      <xsd:enumeration value="state"/>
+      <xsd:enumeration value="ownerId"/>
+      <xsd:enumeration value="cDate"/>
+      <xsd:enumeration value="mDate"/>
+      <xsd:enumeration value="dcmDate"/>
+      <xsd:enumeration value="title"/>
+      <xsd:enumeration value="creator"/>
+      <xsd:enumeration value="subject"/>
+      <xsd:enumeration value="description"/>
+      <xsd:enumeration value="publisher"/>
+      <xsd:enumeration value="contributor"/>
+      <xsd:enumeration value="date"/>
+      <xsd:enumeration value="type"/>
+      <xsd:enumeration value="format"/>
+      <xsd:enumeration value="identifier"/>
+      <xsd:enumeration value="source"/>
+      <xsd:enumeration value="language"/>
+      <xsd:enumeration value="relation"/>
+      <xsd:enumeration value="coverage"/>
+      <xsd:enumeration value="right"/>
+      <xsd:enumeration value="relobj"/>
+      <xsd:enumeration value="dctype"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="searchConditionOperatorType">
+    <xsd:attribute name="value" use="required" type="searchConditionOperatorEnumType"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="searchConditionOperatorEnumType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of valid search condition operators.
+        The contains (~) operator may be used in combination with the ? and 
+        * wildcards to query for simple string patterns.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="~"/>
+      <xsd:enumeration value="="/>
+      <xsd:enumeration value="&gt;"/>
+      <xsd:enumeration value="&lt;"/>
+      <xsd:enumeration value="&gt;="/>
+      <xsd:enumeration value="&lt;="/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="searchConditionValueType">
+    <xsd:attribute name="value" use="required" type="xsd:string"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="repoStateType">
+    <xsd:annotation>
+      <xsd:documentation>
+        This type enumerates the restrictions on the state of an object, a
+        datastream etc. of the FC Repository.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="A"/>
+      <xsd:enumeration value="I"/>
+      <xsd:enumeration value="D"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="datastreamAttributeType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of valid datastream header attribute names.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="dsLabel"/>
+      <xsd:enumeration value="dsVersionID"/>
+      <xsd:enumeration value="dsCreateDate"/>
+      <xsd:enumeration value="dsState"/>
+      <xsd:enumeration value="dsMIME"/>
+      <xsd:enumeration value="dsFormatURI"/>
+      <xsd:enumeration value="dsControlGroup"/>
+      <xsd:enumeration value="dsSize"/>
+      <xsd:enumeration value="dsVersionable"/>
+      <xsd:enumeration value="dsInfoType"/>
+      <xsd:enumeration value="dsLocation"/>
+      <xsd:enumeration value="dsLocationType"/>
+      <xsd:enumeration value="dsChecksumType"/>
+      <xsd:enumeration value="dsChecksum"/>
+      <xsd:enumeration value="dsAltID"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>
+
+
+
