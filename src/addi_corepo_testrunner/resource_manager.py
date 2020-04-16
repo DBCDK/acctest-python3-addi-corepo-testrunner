@@ -19,10 +19,10 @@ import time
 
 from configobj import ConfigObj
 
-from dbc_python.net.iserver import IServer
+from os_python.common.net.iserver import IServer
 from acceptance_tester.abstract_testsuite_runner.resource_manager import AbstractResourceManager
-from dbc_python.utils.init_functions import die
-from dbc_python.utils.init_functions import NullHandler
+from os_python.common.utils.init_functions import die
+from os_python.common.utils.init_functions import NullHandler
 from os_python.docker.docker_container import DockerContainer
 from os_python.docker.docker_container import ContainerSuitePool
 from os_python.connectors.postgres import PostgresDockerConnector

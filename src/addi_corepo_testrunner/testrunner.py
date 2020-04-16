@@ -17,8 +17,8 @@ from nose.tools import nottest
 
 from acceptance_tester.abstract_testsuite_runner.test_runner import TestRunner as AbstractTestRunner
 
-from dbc_python.utils.init_functions import NullHandler
-from dbc_python.utils.cleanupstack import CleanupStack
+from os_python.common.utils.init_functions import NullHandler
+from os_python.common.utils.cleanupstack import CleanupStack
 
 from os_python.addiservice.addi_parser import AddiParser
 from os_python.hive.hive_parser import HiveParser
