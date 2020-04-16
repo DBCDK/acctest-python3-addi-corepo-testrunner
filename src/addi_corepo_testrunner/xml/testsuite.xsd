@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file is part of opensearch.
+Copyright © 2009, Dansk Bibliotekscenter a/s,
+Tempovej 7-11, DK-2750 Ballerup, Denmark. CVR: 15149043
+
+opensearch is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+opensearch is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with opensearch.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- xsd documenting how test-scenarios for a testsuite should be -->
+<!-- formulated. -->
+<!-- Used to validate test-scenarios. -->
+<xsd:schema targetNamespace="info:testsuite#"
+            xmlns="info:testsuite#"
+            xmlns:fc="http://dbc.dk/xml/namespaces/fcrepo"
+            xmlns:ad="http://dbc.dk/xml/namespaces/addi"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+
+  <xsd:import namespace="http://dbc.dk/xml/namespaces/fcrepo" schemaLocation="fcrepo.xsd" />
+  <xsd:import namespace="http://dbc.dk/xml/namespaces/addi" schemaLocation="addi.xsd" />
+
+  <xsd:element name="testsuite">
+    <xsd:annotation>
+      <xsd:documentation>
+        test occurence is unbounded, i.e. you can have as many tests as
+        you want in the root element. The type attribute is required.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence maxOccurs="1">
+
+        <xsd:element name="setup" type="setupType" />
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="test" type="testType"/>
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="type" use="required" type="xsd:string"/>
+    </xsd:complexType>
+
+
+  </xsd:element>
+
+  <xsd:complexType name="setupType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'setup' elements contain a bounded number of elements of the following types:
+        * fc:fcrepo from namespace http://dbc.dk/xml/namespaces/fcrepo
+        * ad:addi from namespace http://dbc.dk/xml/namespaces/addi
+        in that particular order
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element ref="fc:fcrepo"/>
+      <xsd:element ref="ad:addiService"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="testType">
+    <xsd:annotation>
+      <xsd:documentation>
+        test elements
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence maxOccurs="unbounded">
+
+      <xsd:element name="description" minOccurs="0" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>
+            The description node should contain a verbose description of
+            the project. The text is used for ducomentaion purposes, and
+            is also printed during testruns.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="given" minOccurs="0" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>
+            Node for documentation purposes. 
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="when" minOccurs="0" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>
+            Node for documentation purposes.        
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="then" minOccurs="0" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>            
+            Node for documentation purposes. 
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:choice>
+        <xsd:element ref="fc:checkAddi"/>
+        <xsd:element ref="fc:checkPrimaryUnit"/>
+        <xsd:element ref="fc:checkPrimaryWork"/>
+        <xsd:element ref="fc:checkUnit"/>
+        <xsd:element ref="fc:checkWork"/>
+        <xsd:element ref="fc:getDatastreamAttribute"/>
+        <xsd:element ref="fc:getDatastreamState"/>
+        <xsd:element ref="fc:hasDatastreamContent"/>
+        <xsd:element ref="fc:ingest"/>
+        <xsd:element ref="fc:listDatastreams"/>
+        <xsd:element ref="fc:search"/>
+        <xsd:element ref="fc:snapshot"/>
+        <xsd:element ref="fc:streamModified"/>
+        <xsd:element ref="fc:streamNotModified"/>
+        <xsd:element ref="ad:addJob"/>
+
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="name" use="required" type="xsd:string"/>
+  </xsd:complexType>
+
+</xsd:schema>
+
+
+

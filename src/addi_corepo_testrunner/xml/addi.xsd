@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   This file is part of opensearch.
+   Copyright © 2009, Dansk Bibliotekscenter a/s,
+   Tempovej 7-11, DK-2750 Ballerup, Denmark. CVR: 15149043
+
+   opensearch is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   opensearch is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with opensearch.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!-- xsd documenting how to utilize the addi wrapper in test-scenarios. -->
+
+<xsd:schema targetNamespace="http://dbc.dk/xml/namespaces/addi"
+            xmlns="http://dbc.dk/xml/namespaces/addi"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+
+  <xsd:element name="addiService">
+    <xsd:annotation>
+      <xsd:documentation>
+        Addi service setup node
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="addJob">
+    <xsd:annotation>
+      <xsd:documentation>
+        Adding job to addi-service
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="relationType" minOccurs="0" maxOccurs="unbounded" type="relationtypeType"/>
+      </xsd:sequence>
+      <xsd:attribute name="pid" use="required" type="xsd:string"/>
+      <xsd:attribute name="priority" use="optional" type="priorityType"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="priorityType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'priority' can be either 'low', 'normal', 'high'
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="low"/>
+      <xsd:enumeration value="normal"/>
+      <xsd:enumeration value="high"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="relationtypeType">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+
+</xsd:schema>
+
+
+
