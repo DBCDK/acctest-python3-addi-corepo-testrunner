@@ -80,7 +80,8 @@ pipeline {
     }
     post {
         always {
-            junit 'nosetests.xml'
+            // No tests. So no nosetests.xml file
+            //junit 'nosetests.xml'
             sh ' chown -R --reference=. . '
         }
         failure {
