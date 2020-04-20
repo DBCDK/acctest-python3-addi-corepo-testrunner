@@ -159,7 +159,7 @@ class ResourceManager( AbstractResourceManager ):
         result = subprocess.Popen(exe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = result.communicate()
         if result.returncode != 0:
-            die("Something went during maven call %s" % stdout + stderr)
+            die("Something went during maven call %s" % stdout.decode("utf-8") + stderr.decode("utf-8"))
 
     def shutdown(self):
         self.container_pool.shutdown()
