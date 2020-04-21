@@ -144,22 +144,9 @@ class ResourceManager( AbstractResourceManager ):
 
         self.container_pool = ContainerPoolImpl(resource_folder)
 
-        self.required_artifacts = {'wiremock-rules-openagency': ['wiremock-rules-openagency.zip', 'os-wiremock-rules']}
+        self.required_artifacts = {'wiremock-rules-openagency': ['wiremock-rules-openagency.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
         for artifact in self.required_artifacts:
             self.required_artifacts[artifact].append(self._secure_artifact(artifact, *self.required_artifacts[artifact]))
-
-        logger.info( "Fetch corepo-ingest from maven repository." )
-
-        # Must use maven-dependency-plugin:2.8 to support get file
-        exe_cmd = ["mvn",
-                   "org.apache.maven.plugins:maven-dependency-plugin:2.8:get",
-                   "-Ddest=%s" % self.resource_folder,
-                   "-Dartifact=dk.dbc:corepo-ingest:1.1-SNAPSHOT",
-                   "-DremoteRepositories=http://mavenrepo.dbc.dk/nexus/content/groups/public"]
-        result = subprocess.Popen(exe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = result.communicate()
-        if result.returncode != 0:
-            die("Something went during maven call %s" % stdout + stderr)
 
     def shutdown(self):
         self.container_pool.shutdown()

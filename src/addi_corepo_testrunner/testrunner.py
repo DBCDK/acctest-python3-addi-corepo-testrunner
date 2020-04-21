@@ -70,7 +70,7 @@ class TestRunner( AbstractTestRunner ):
             addi_service = container_suite.get("addi-service", build_folder)
 
             ### Connectors
-            ingest_tool = os.path.join(resource_manager.resource_folder, 'corepo-ingest-1.1-SNAPSHOT.jar')
+            ingest_tool = os.path.join(resource_manager.resource_folder, 'corepo-ingest.jar')
             corepo_content_service_connector = CorepoContentService("http://%s:8080" % corepo_content_service.get_ip())
             corepo_connector = Corepo(corepo_db, corepo_content_service, ingest_tool, os.path.join(build_folder, 'ingest'))
 
