@@ -15,7 +15,7 @@ properties([
         triggers: [
             [
                 $class: 'jenkins.triggers.ReverseBuildTrigger',
-                upstreamProjects: "../acctest-python3-os/job/master, ../acctest-python3-acceptance-tester/job/master", threshold: hudson.model.Result.SUCCESS
+                upstreamProjects: "../acctest-python3-os/master, ../acctest-python3-acceptance-tester/master", threshold: hudson.model.Result.SUCCESS
             ]
         ]
     ])
