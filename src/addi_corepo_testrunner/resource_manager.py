@@ -76,7 +76,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                         start_timeout=1200)
 
         hive = suite.create_container("hive",
-                                      image_name=DockerContainer.secure_docker_image('hive-app-1.0-snapshot'),
+                                      image_name=DockerContainer.secure_docker_image('hive-app-1.0-snapshot', tag='11293'),
                                       name="hive" + suite_name,
                                       environment_variables={"REPOSITORY_URL": "jdbc:postgresql://corepo:corepo@%s:5432/corepo" % corepo_db.get_ip(),
                                                              "HARVEST_MODE": "SERVER",
