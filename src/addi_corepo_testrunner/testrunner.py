@@ -81,7 +81,7 @@ class TestRunner( AbstractTestRunner ):
             repository_parser = CorepoParser(self.base_folder, corepo_connector)
             openagency_parser = OpenAgencyParser(openagency_connector)
             hive_parser = HiveParser(self.base_folder, hive_connector)
-            addi_parser = AddiParser(self.base_folder, addi_service, corepo_content_service_connector)
+            addi_parser = AddiParser(self.base_folder, addi_service, corepo_connector)
 
             stop_stack = CleanupStack.getInstance()
             try:
