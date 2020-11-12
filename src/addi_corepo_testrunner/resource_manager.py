@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # -*- mode: python -*-
 """
@@ -86,7 +86,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                              # be added manually in test to be able to control order
                                                              "ADDISERVICE_URL": "",
                                                              "BATCHEXCHANGE_JDBCURL": "",
-                                                             "OPENAGENCY_URL": "http://%s:8080" % wiremock.get_ip(),
+                                                             "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-extern-test.svc.cloud.dbc.dk/1.0/api/",
                                                              "HIVE_POOLSIZE": 1,
                                                              "HARVEST_POLLINTERVAL":2,
                                                              "LOG__JavaScript_Logger": "TRACE",
