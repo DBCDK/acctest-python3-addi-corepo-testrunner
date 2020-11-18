@@ -22,9 +22,7 @@ from os_python.common.utils.cleanupstack import CleanupStack
 
 from os_python.addiservice.addi_parser import AddiParser
 from os_python.hive.hive_parser import HiveParser
-from os_python.openagency_parser import OpenAgencyParser
 from os_python.connectors.hive import HiveDockerConnector
-from os_python.connectors.openagency_mock import OpenAgencyMock
 
 from os_python.connectors.corepo import CorepoContentService
 from os_python.corepo.corepo import Corepo
@@ -65,7 +63,6 @@ class TestRunner( AbstractTestRunner ):
         try:
             corepo_db = container_suite.get("corepo-db", build_folder)
             corepo_content_service = container_suite.get("corepo-content-service", build_folder)
-            wiremock = container_suite.get("wiremock", build_folder)
             hive = container_suite.get("hive", build_folder)
             addi_service = container_suite.get("addi-service", build_folder)
 
@@ -74,18 +71,16 @@ class TestRunner( AbstractTestRunner ):
             corepo_content_service_connector = CorepoContentService("http://%s:8080" % corepo_content_service.get_ip())
             corepo_connector = Corepo(corepo_db, corepo_content_service, ingest_tool, os.path.join(build_folder, 'ingest'))
 
-            openagency_connector = OpenAgencyMock("http://%s:8080" % wiremock.get_ip(), proxy="https://openagency.addi.dk/test_2.34/")
             hive_connector = HiveDockerConnector(hive)
 
             ### Setup parser
             repository_parser = CorepoParser(self.base_folder, corepo_connector)
-            openagency_parser = OpenAgencyParser(openagency_connector)
             hive_parser = HiveParser(self.base_folder, hive_connector)
             addi_parser = AddiParser(self.base_folder, addi_service, corepo_connector)
 
             stop_stack = CleanupStack.getInstance()
             try:
-                for pf in [repository_parser.parser_functions, openagency_parser.parser_functions, hive_parser.parser_functions, addi_parser.parser_functions]:
+                for pf in [repository_parser.parser_functions, hive_parser.parser_functions, addi_parser.parser_functions]:
                     self.parser_functions.update(pf)
 
                 stop_stack.addFunction(self.save_service_logfiles, corepo_connector, 'corepo')
