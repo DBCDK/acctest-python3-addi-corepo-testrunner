@@ -6,8 +6,8 @@
 // See: https://issues.jenkins-ci.org/browse/JENKINS-43911
 def python3ImageVersion = findLastSuccessfulBuildNumber('Docker-base-debian-python3/job/master')
 
-def ownerEmail = "os-team@dbc.dk"
-def ownerSlack = "search"
+def ownerEmail = "de-team@dbc.dk"
+def ownerSlack = "data-engineering-team"
 
 properties([
     disableConcurrentBuilds(),
