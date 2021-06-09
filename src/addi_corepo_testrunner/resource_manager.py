@@ -87,7 +87,6 @@ class ContainerPoolImpl(ContainerSuitePool):
                                       environment_variables={"REPOSITORY_URL": "jdbc:postgresql://corepo:corepo@%s:5432/corepo" % corepo_db.get_ip(),
                                                              "HARVEST_MODE": "SERVER",
                                                              "HARVEST_HARVESTER": "ESFileRecordFeeder",
-                                                             "HOLDINGSDB_URL": "",
                                                              # ADDISERVICE_URL must not point to ADDI service. US1818 requires that addi jobs
                                                              # be added manually in test to be able to control order
                                                              "ADDISERVICE_URL": "",
