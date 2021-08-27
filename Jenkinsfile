@@ -7,7 +7,7 @@
 def python3ImageVersion = findLastSuccessfulBuildNumber('Docker-base-debian-python3/job/master')
 
 def ownerEmail = "de-team@dbc.dk"
-def ownerSlack = "data-engineering-team"
+def ownerSlack = "de-team"
 
 properties([
     disableConcurrentBuilds(),
