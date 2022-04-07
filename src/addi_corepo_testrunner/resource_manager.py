@@ -50,7 +50,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                            start_timeout=1200)
         addi_db = suite.create_container("addi-db",
                                          name="addi-db" + suite_name,
-                                         image_name=DockerContainer.secure_docker_image('dbc-postgres-13', registry='docker.dbc.dk'),
+                                         image_name=DockerContainer.secure_docker_image('dbc-postgres-13', registry='docker-dbc.artifacts.dbccloud.dk'),
                                          environment_variables={"POSTGRES_USER": "addi",
                                                                 "POSTGRES_PASSWORD": "addi",
                                                                 "POSTGRES_DB": "addi"},                                         
