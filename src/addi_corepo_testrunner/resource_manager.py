@@ -35,9 +35,10 @@ logger.addHandler( NullHandler() )
 
 class ContainerPoolImpl(ContainerSuitePool):
 
-    def __init__(self, resource_folder):
+    def __init__(self, resource_folder, resource_config):
         super(ContainerPoolImpl, self).__init__()
         self.resource_folder = resource_folder
+        self.resource_config = resource_config
 
     def create_suite(self, suite):
         suite_name = "_addi_corepo_%f" % time.time()
@@ -57,7 +58,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                          start_timeout=1200)
 
 
-        vipcore = suite.create_container("vipcore", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
+        vipcore = suite.create_container("vipcore", image_name=DockerContainer.secure_docker_image('wiremock'),
                              name="vipcore" + suite_name,
                              start_timeout=1200)
 
@@ -98,16 +99,32 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                              "LOG__dk_dbc": "TRACE"},
                                       start_timeout=1200)
 
+
+        logger.debug("configured resource %s" % (self.resource_config))
+        # Use local javascript if .ini file set
+        volumes = None
+        if 'javascript' in self.resource_config:
+            # Copy to an other directory, or jscommon folder will be hidden
+            volumes={self.resource_config['javascript']: "/javascript"}
+            logger.debug("configured volumes %s" % (volumes))
+
+        if 'loglevel' in self.resource_config:
+            log_level = self.resource_config['loglevel']
+        else:
+            log_level = "DEBUG"
+        logger.debug("Loglevel for worker is %s" % (log_level))
+
         addi_service = suite.create_container("addi-service",
                                               name="addi-service" + suite_name,
                                               image_name=DockerContainer.secure_docker_image('addi-service-webapp-1.0-snapshot'),
                                               environment_variables={"COREPO_DATABASE": corepo_db_root,
                                                                      "ADDI_DATABASE": "addi:addi@%s:5432/addi" % addi_db.get_ip(),
                                                                      "THREAD_POOL_SIZE": 1,
-                                                                     "LOG__JavaScript_Logger": "TRACE",
-                                                                     "LOG__dk_dbc": "TRACE",
+                                                                     "LOG__JavaScript_Logger": log_level,
+                                                                     "LOG__dk_dbc": log_level,
                                                                      "JAVA_MAX_HEAP_SIZE": "2G",
                                                                      "PAYARA_STARTUP_TIMEOUT": 1200},
+                                              volumes=volumes,
                                               start_timeout=1200)
 
         corepo_content_service.start()
@@ -147,7 +164,7 @@ class ResourceManager( AbstractResourceManager ):
         self.use_config_resources = use_config
         self.resource_config = ConfigObj(self.use_config_resources)
 
-        self.container_pool = ContainerPoolImpl(resource_folder)
+        self.container_pool = ContainerPoolImpl(resource_folder, self.resource_config)
 
         self.required_artifacts = {'wiremock-vipcore': ['wiremock-vipcore.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
         for artifact in self.required_artifacts:
