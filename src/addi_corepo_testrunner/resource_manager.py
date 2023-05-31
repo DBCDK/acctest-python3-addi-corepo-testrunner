@@ -103,9 +103,10 @@ class ContainerPoolImpl(ContainerSuitePool):
         logger.debug("configured resource %s" % (self.resource_config))
         # Use local javascript if .ini file set
         volumes = None
+        addi_service_jsar = '/nashorn-js-addi-service.jsar'
         if 'javascript' in self.resource_config:
-            # Copy to an other directory, or jscommon folder will be hidden
-            volumes={self.resource_config['javascript']: "/javascript"}
+            volumes={self.resource_config['javascript']: '/local.jsar'}
+            addi_service_jsar = '/local.jsar'
             logger.debug("configured volumes %s" % (volumes))
 
         if 'loglevel' in self.resource_config:
@@ -116,10 +117,11 @@ class ContainerPoolImpl(ContainerSuitePool):
 
         addi_service = suite.create_container("addi-service",
                                               name="addi-service" + suite_name,
-                                              image_name=DockerContainer.secure_docker_image('addi-service-webapp-1.0-snapshot'),
+                                              image_name=DockerContainer.secure_docker_image('addi-service'),
                                               environment_variables={"COREPO_DATABASE": corepo_db_root,
                                                                      "ADDI_DATABASE": "addi:addi@%s:5432/addi" % addi_db.get_ip(),
                                                                      "THREAD_POOL_SIZE": 1,
+                                                                     "JSAR": addi_service_jsar,
                                                                      "LOG__JavaScript_Logger": log_level,
                                                                      "LOG__dk_dbc": log_level,
                                                                      "JAVA_MAX_HEAP_SIZE": "2G",
